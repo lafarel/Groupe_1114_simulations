@@ -306,8 +306,7 @@ def angle_equilibre(plateforme, charge, precision, grue=None):
             couple_archi = masse_totale * 9.81 * xC_final((theta + decimal), plateforme,
                                                           enfoncement)
             if grue:  # calcul du couple si la grue est prise en compte
-                couple_total = charge.couple() + grue.couple(charge.x,
-                                                             charge.z - plateforme.hauteur + enfoncement) - couple_archi
+                couple_total = charge.couple() + grue.couple(charge.x, charge.z - plateforme.hauteur + enfoncement) - couple_archi
             else:  # calcul du couple si le poids de la grue est ignoré
                 couple_total = charge.couple() - couple_archi
             if couple_total > 0 and theta < theta_max:  # Si l'inclinaison est positive
@@ -323,7 +322,7 @@ def angle_equilibre(plateforme, charge, precision, grue=None):
 def initialisation():
     """
     Initialise la simulation. Retourne les variables utilisées dans la simulation.
-    C'est dans cette fonction qu'il faut modifier les paramètres d'une simulation
+    C'est dans cette fonction qu'il faut modifier les paramètres d'une simulation.
     """
     # création de la plateforme
     hauteur1 = 0.19  # hauteur de la plateforme
@@ -333,13 +332,12 @@ def initialisation():
 
     # création de la charge
     distance = 0.7
-    hauteur2 = 0.35
+    hauteur2 = 0.3
     masse2 = 0.3
     charge = Charge(distance, hauteur2, masse2)
 
     # création de la grue
-    grue = Grue(0.3, 0.305, 0.225,
-                (0.9, 0.4, 0.4))  # les valeurs sont spécifiques à notre prototype de grue
+    grue = Grue(0.3, 0.305, 0.225, (0.9, 0.4, 0.4))  # les valeurs sont spécifiques à notre prototype de grue
 
     # variables dépendantes
     masse_totale = plateforme.masse + charge.masse + grue.masse_tot  # masse du système
@@ -460,8 +458,7 @@ def simulation_charge_mobile():
         couple_archi = masse_totale * 9.81 * xC_final(theta[i], plateforme,
                                                       enfoncement)  # Couple de la force d'Archimède
         couple_amort = - coef_amort * omega[i]
-        couple_total = charge.couple() - couple_archi + couple_amort + grue.couple(charge.x,
-                                                                                   charge.z - plateforme.hauteur + enfoncement)
+        couple_total = charge.couple() - couple_archi + couple_amort + grue.couple(charge.x, charge.z - plateforme.hauteur + enfoncement)
 
         alpha[i] = couple_total / moment_inertie
         omega[i + 1] = omega[i] + alpha[i] * step
