@@ -325,15 +325,15 @@ def initialisation():
     C'est dans cette fonction qu'il faut modifier les paramètres d'une simulation.
     """
     # création de la plateforme
-    hauteur1 = 0.19  # hauteur de la plateforme
-    largeur = 0.59  # largeur de la plateforme
-    masse1 = 27  # masse de la plateforme
+    hauteur1 = 0.19  # hauteur de la plateforme [m]
+    largeur = 0.59  # largeur de la plateforme [m]
+    masse1 = 27  # masse de la plateforme [kg]
     plateforme = Plateforme(hauteur1, largeur, masse1)
 
     # création de la charge
-    distance = 0.7
-    hauteur2 = 0.3
-    masse2 = 0.3
+    distance = 0.7    # [m]
+    hauteur2 = 0.3    # [m]
+    masse2 = 0.3    # [kg]
     charge = Charge(distance, hauteur2, masse2)
 
     # création de la grue
@@ -423,7 +423,7 @@ def simulation_charge_mobile():
     x_A, z_A = 0, 0.15
     charge.x, charge.z = x_A, z_A
 
-    # vitesse de déplacement
+    # vitesse de déplacement [m/s]
     v = 0.2
 
     # position de départ équilibrée
