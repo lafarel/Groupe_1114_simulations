@@ -9,7 +9,7 @@ Hypothèses d'application du modèle:
     - La masse de la plateforme est uniformément répartie
     - La charge a toujours des coordonnées positives
 """
-from math import atan, tan, sin, cos, pi, asin
+from math import atan, tan, sin, cos, pi, asin, degrees
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -346,6 +346,7 @@ def initialisation():
     enfoncement = get_enfoncement(masse_totale, plateforme)
     soul = incl_max_soul(plateforme, enfoncement)
     sub = incl_max_sub(plateforme, enfoncement)
+    theta_final = angle_equilibre(plateforme, charge, 8, grue)
 
     coef_amort = 0.4  # coefficient d'amortissement de l'eau
 
@@ -364,7 +365,7 @@ def initialisation():
     theta[0] = theta_0
     omega[0] = omega_0
 
-    return plateforme, charge, grue, masse_totale, enfoncement, sub, soul, coef_amort, step, end, t, theta, omega, alpha
+    return plateforme, charge, grue, masse_totale, enfoncement, sub, soul, coef_amort, step, end, t, theta, omega, alpha, theta_final
 
 
 def simulation_charge_fixe():
@@ -380,9 +381,8 @@ def simulation_charge_fixe():
         theta_final: float, angle d'équilibre [rad] calculé en début de simulation
     """
     # Initalisation de la simulation
-    plateforme, charge, grue, masse_totale, enfoncement, sub, soul, coef_amort, step, end, t, theta, omega, alpha = initialisation()
+    plateforme, charge, grue, masse_totale, enfoncement, sub, soul, coef_amort, step, end, t, theta, omega, alpha, theta_final = initialisation()
     moment_inertie = plateforme.moment_inertie(enfoncement) + charge.moment_inertie()
-    theta_final = angle_equilibre(plateforme, charge, 8, grue)
     for i in range(len(t) - 1):
         if abs(theta[i]) > min(sub,
                                soul):  # vérifie que l'inclinaison ne dépasse pas les valeurs critiques
@@ -395,8 +395,7 @@ def simulation_charge_fixe():
         couple_archi = masse_totale * 9.81 * xC_final(theta[i], plateforme,
                                                       enfoncement)  # Couple de la force d'Archimède
         couple_amort = - coef_amort * omega[i]
-        couple_total = charge.couple() - couple_archi + couple_amort + grue.couple(charge.x,
-                                                                                   charge.z - plateforme.hauteur + enfoncement)
+        couple_total = charge.couple() - couple_archi + couple_amort + grue.couple(charge.x, charge.z - plateforme.hauteur + enfoncement)
 
         alpha[i] = couple_total / moment_inertie
         omega[i + 1] = omega[i] + alpha[i] * step
@@ -417,7 +416,7 @@ def simulation_charge_mobile():
         fin_deplacement: int, index correpondant au moment de fin du déplacement de la charge
     """
     # Initalisation de la simulation
-    plateforme, charge, grue, masse_totale, enfoncement, sub, soul, coef_amort, step, end, t, theta, omega, alpha = initialisation()
+    plateforme, charge, grue, masse_totale, enfoncement, sub, soul, coef_amort, step, end, t, theta, omega, alpha = initialisation()[:-1]
 
     # point d'arrivée
     x_B, z_B = charge.x, charge.z
@@ -566,12 +565,21 @@ def compare_phase(theta1, omega1, theta2, omega2):
 
 
 if __name__ == '__main__':
-    sim_1 = simulation_charge_fixe()
-    sim_2 = simulation_charge_mobile()
-    graphique_theta(sim_1[0], sim_1[1], sim_1[2], sim_1[3], sim_1[5])  # inclinaison charge fixe
-    graphique_theta(sim_2[0], sim_2[1], sim_2[2], sim_2[3])
-    compare_sim_graph(sim_1[0], sim_1[1], sim_1[2], sim_1[3], sim_2[3],
-                      sim_1[5])  # inclinaison comparaison fixe/mobile
-    phase_graph(sim_1[3], sim_1[4])  # phase charge fixe
-    phase_graph(sim_2[3], sim_2[4], sim_2[5])  # phase charge mobile
-    compare_phase(sim_1[3], sim_1[4], sim_2[3], sim_2[4])  # phase comparaison fixe/mobile
+    choice = input("1: Angle d'inclinaison\n2: Graphiques\nchoix:")
+    while choice not in ("1","2"):
+        print("choix non valide")
+        choice = input("1: Angle d'inclinaison\n2: Graphiques\nchoix:")
+    if choice == "2":
+        sim_1 = simulation_charge_fixe()
+        sim_2 = simulation_charge_mobile()
+        graphique_theta(sim_1[0], sim_1[1], sim_1[2], sim_1[3], sim_1[5])  # inclinaison charge fixe
+        graphique_theta(sim_2[0], sim_2[1], sim_2[2], sim_2[3])
+        compare_sim_graph(sim_1[0], sim_1[1], sim_1[2], sim_1[3], sim_2[3],
+                          sim_1[5])  # inclinaison comparaison fixe/mobile
+        phase_graph(sim_1[3], sim_1[4])  # phase charge fixe
+        phase_graph(sim_2[3], sim_2[4], sim_2[5])  # phase charge mobile
+        compare_phase(sim_1[3], sim_1[4], sim_2[3], sim_2[4])  # phase comparaison fixe/mobile
+    else:
+        print("Inclinaison:", degrees(initialisation()[-1]))
+
+
