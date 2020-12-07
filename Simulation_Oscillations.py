@@ -485,11 +485,13 @@ def graphique_theta(sub, soul, t, theta, theta_final=None):
     plt.axhline(y=-soul, color='purple', linestyle='--')
     if theta_final:
         plt.axhline(y=theta_final, color='black', linestyle='--', label="angle d'équilibre")
+        plt.title("Graphique de l'oscillation de la barge en fonction du temps:\nCharge fixe")
+    else:
+        plt.title("Graphique de l'oscillation de la barge en fonction du temps:\nCharge mobile")
     plt.plot(t, theta, label="theta")
     plt.legend()
     plt.xlabel('temps [s]')
     plt.ylabel("inclinaison de la plateforme [rad]")
-    plt.title("Graphique de l'oscillation de la barge en fonction du temps")
     plt.show()
 
 
@@ -517,7 +519,7 @@ def compare_sim_graph(sub, soul, t, theta1, theta2, theta_final):
     plt.legend()
     plt.xlabel('temps [s]')
     plt.ylabel("inclinaison de la plateforme [rad]")
-    plt.title("Comparaison de l'inclinaison en fonction du temps :\n Charge fixe et charge mobile")
+    plt.title("Comparaison de l'inclinaison en fonction du temps :\nCharge fixe et charge mobile")
     plt.show()
 
 
@@ -534,10 +536,12 @@ def phase_graph(theta, omega, fin=None):
     plt.plot(theta, omega, color='blue')
     if fin:
         plt.axvline(x=theta[fin], color="green", linestyle='--', label="fin du déplacement")
+        plt.title("Diagramme de phase des oscillation de la plateforme:\nCharge mobile")
         plt.legend()
+    else:
+        plt.title("Diagramme de phase des oscillation de la plateforme:\nCharge fixe")
     plt.xlabel('inclinaison [rad]')
     plt.ylabel("vitesse angulaire [rad/s]")
-    plt.title("Diagramme de phase des oscillation de la plateforme")
     plt.show()
 
 
@@ -556,7 +560,7 @@ def compare_phase(theta1, omega1, theta2, omega2):
     plt.plot(theta2, omega2, color='blue', label="charge mobile")
     plt.xlabel('inclinaison [rad]')
     plt.ylabel("vitesse angulaire [rad/s]")
-    plt.title("Diagrame de phase des oscillation de la plateforme")
+    plt.title("Diagrame de phase des oscillation de la plateforme:\nCharge fixe et charge mobile")
     plt.legend()
     plt.show()
 
