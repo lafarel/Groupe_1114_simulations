@@ -336,7 +336,7 @@ def initialisation():
     charge = Charge(distance, hauteur2, masse2)
 
     # création de la grue
-    grue = Grue(0.3, 0.305, 0.225, (0.9, 0.4, 0.5))  # les valeurs sont spécifiques à notre prototype de grue
+    grue = Grue(0.33, 0.305, 0.225, (0.9, 0.4, 0.5))  # les valeurs sont spécifiques à notre prototype de grue
 
     # variables dépendantes
     masse_totale = plateforme.masse + charge.masse + grue.masse_tot  # masse du système
