@@ -331,7 +331,7 @@ def initialisation():
     plateforme = Plateforme(hauteur1, largeur, masse1)
 
     # création de la charge
-    distance = 0.7    # [m]
+    distance = 0.3 + 0.4    # [m] distance = 0.3 + [distance par rapport à la plateforme]
     hauteur2 = 0.5    # [m]
     masse2 = 0.2    # [kg]
     charge = Charge(distance, hauteur2, masse2)
