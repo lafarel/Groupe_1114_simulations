@@ -303,8 +303,7 @@ def angle_equilibre(plateforme, charge, precision, grue=None):
     for decimal in range(precision):
         decimal = 10 ** -decimal
         for i in range(9):
-            couple_archi = masse_totale * 9.81 * xC_final((theta + decimal), plateforme,
-                                                          enfoncement)
+            couple_archi = masse_totale * 9.81 * xC_final((theta + decimal), plateforme, enfoncement)
             if grue:  # calcul du couple si la grue est prise en compte
                 couple_total = charge.couple() + grue.couple(charge.x, charge.z - plateforme.hauteur + enfoncement) - couple_archi
             else:  # calcul du couple si le poids de la grue est ignoré
@@ -337,7 +336,7 @@ def initialisation():
     charge = Charge(distance, hauteur2, masse2)
 
     # création de la grue
-    grue = Grue(0.33, 0.305, 0.225, (0.9, 0.4, 0.5))  # les valeurs sont spécifiques à notre prototype de grue
+    grue = Grue(0.3, 0.305, 0.225, (0.9, 0.4, 0.5))  # les valeurs sont spécifiques à notre prototype de grue
 
     # variables dépendantes
     masse_totale = plateforme.masse + charge.masse + grue.masse_tot  # masse du système
@@ -420,13 +419,13 @@ def simulation_charge_mobile():
     x_B, z_B = charge.x, charge.z
 
     # point de départ
-    x_A, z_A = 0, 0.15
+    x_A, z_A = enfoncement, 0.25
     charge.x, charge.z = x_A, z_A
 
     # vitesse de déplacement [m/s]
     v = 0.2
 
-    # position de départ équilibrée
+    # position de départ équilibrée (on considère que la plateforme est stable avant le déplacement)
     theta[0] = angle_equilibre(plateforme, charge, 8, grue)
 
     # trajectoire
@@ -535,6 +534,7 @@ def phase_graph(theta, omega, fin=None):
     plt.plot(theta, omega, color='blue')
     if fin:
         plt.axvline(x=theta[fin], color="green", linestyle='--', label="fin du déplacement")
+        plt.legend()
     plt.xlabel('inclinaison [rad]')
     plt.ylabel("vitesse angulaire [rad/s]")
     plt.title("Diagramme de phase des oscillation de la plateforme")
