@@ -330,10 +330,10 @@ def initialisation():
     plateforme = Plateforme(hauteur1, largeur, masse1)
 
     # création de la charge
-    distance = 0.3 + 0.4    # [m] distance = 0.3 + [distance par rapport à la plateforme]
+    distance = 0.4    # distance de la charge par rapport à la plateforme [m]
     hauteur2 = 0.5    # [m]
     masse2 = 0.2    # [kg]
-    charge = Charge(distance, hauteur2, masse2)
+    charge = Charge(distance + largeur/2, hauteur2, masse2)
 
     # création de la grue
     grue = Grue(0.33, 0.305, 0.225, (0.9, 0.4, 0.5))  # les valeurs sont spécifiques à notre prototype de grue
@@ -398,7 +398,7 @@ def simulation_charge_fixe():
         omega[i + 1] = omega[i] + alpha[i] * step
         theta[i + 1] = theta[i] + omega[i] * step
         alpha[i + 1] = alpha[i]
-    return sub, soul, t, theta, omega, theta_final
+    return sub, soul, t, theta, omega, theta_final, alpha
 
 
 def simulation_charge_mobile():
@@ -423,7 +423,7 @@ def simulation_charge_mobile():
     charge.x, charge.z = x_A, z_A
 
     # vitesse de déplacement [m/s]
-    v = 0.2
+    v = 0.14
 
     # position de départ équilibrée (on considère que la plateforme est stable avant le déplacement)
     theta[0] = angle_equilibre(plateforme, charge, 8, grue)
@@ -464,7 +464,7 @@ def simulation_charge_mobile():
         theta[i + 1] = theta[i] + omega[i] * step
         alpha[i + 1] = alpha[i]
 
-    return sub, soul, t, theta, omega, fin_deplacement
+    return sub, soul, t, theta, omega, fin_deplacement, alpha
 
 
 def graphique_theta(sub, soul, t, theta, theta_final=None):
@@ -495,10 +495,10 @@ def graphique_theta(sub, soul, t, theta, theta_final=None):
     plt.show()
 
 
-def compare_sim_graph(sub, soul, t, theta1, theta2, theta_final):
+def compare_theta_graph(sub, soul, t, theta1, theta2, theta_final):
     """
-    Similaire à graphique_theta(), représente une simulation à charge mobile et une simulation à charge fixe sur le même
-    graphique.
+    Similaire à graphique_theta(), représente l'inclinaison dans une simulation à charge mobile et une simulation
+    à charge fixe sur le même graphique.
 
     Args:
         sub: float, angle de submersion
@@ -565,6 +565,52 @@ def compare_phase(theta1, omega1, theta2, omega2):
     plt.show()
 
 
+def compare_omega_graph(t, omega1, omega2=None):
+    """
+    Représente la vitesse angulaire lors une simulation à charge mobile et une simulation à charge fixe
+    sur le même graphique.
+
+    Args:
+        t: array numpy, représente le temps
+        omega1: array numpy, contient les vitesses angulaires correspondantes à chaque instant de t pour
+        la simulation à charge fixe
+        omega2: array numpy, contient les vitesses angulaires correspondantes à chaque instant de t pour
+        la simulation à charge mobile
+    """
+    plt.figure(1)
+    plt.plot(t, omega1, label="charge fixe", color='green')
+    if omega2 is not None:
+        plt.plot(t, omega2, label="charge mobile", color='blue')
+    plt.legend()
+    plt.xlabel('temps [s]')
+    plt.ylabel("vitesse angulaire [rad/s]")
+    plt.title("Comparaison de la vitesse angulaire en fonction du temps :\nCharge fixe et charge mobile")
+    plt.show()
+
+
+def compare_alpha_graph(t, alpha1, alpha2=None):
+    """
+    Représente l'accélération angulaire lors une simulation à charge mobile et une simulation à charge fixe
+    sur le même graphique.
+
+    Args:
+        t: array numpy, représente le temps
+        alpha1: array numpy, contient les accélérations angulaires correspondantes à chaque instant de t pour
+        la simulation à charge fixe
+        alpha2: array numpy, contient les accélérations angulaires correspondantes à chaque instant de t pour
+        la simulation à charge mobile
+    """
+    plt.figure(1)
+    plt.plot(t, alpha1, label="charge fixe", color='green')
+    if alpha2 is not None:
+        plt.plot(t, alpha2, label="charge mobile", color='blue')
+    plt.legend()
+    plt.xlabel('temps [s]')
+    plt.ylabel("accélération angulaire [rad/s^2]")
+    plt.title("Comparaison de l'accélération angulaire en fonction du temps :\nCharge fixe et charge mobile")
+    plt.show()
+
+
 if __name__ == '__main__':
     choice = input("1: Angle d'inclinaison\n2: Graphiques\nchoix:")
     while choice not in ("1","2"):
@@ -575,11 +621,13 @@ if __name__ == '__main__':
         sim_2 = simulation_charge_mobile()
         graphique_theta(sim_1[0], sim_1[1], sim_1[2], sim_1[3], sim_1[5])  # inclinaison charge fixe
         graphique_theta(sim_2[0], sim_2[1], sim_2[2], sim_2[3])
-        compare_sim_graph(sim_1[0], sim_1[1], sim_1[2], sim_1[3], sim_2[3],
-                          sim_1[5])  # inclinaison comparaison fixe/mobile
+        compare_theta_graph(sim_1[0], sim_1[1], sim_1[2], sim_1[3], sim_2[3],
+                            sim_1[5])  # inclinaison comparaison fixe/mobile
         phase_graph(sim_1[3], sim_1[4])  # phase charge fixe
         phase_graph(sim_2[3], sim_2[4], sim_2[5])  # phase charge mobile
         compare_phase(sim_1[3], sim_1[4], sim_2[3], sim_2[4])  # phase comparaison fixe/mobile
+        compare_omega_graph(sim_1[2], sim_1[4], sim_2[4])
+        compare_alpha_graph(sim_1[2], sim_1[6], sim_2[6])
     else:
         print("Inclinaison:", degrees(initialisation()[-1]))
 
