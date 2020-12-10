@@ -331,7 +331,7 @@ def initialisation():
 
     # création de la charge
     distance = 0.4    # distance de la charge par rapport à la plateforme [m]
-    hauteur2 = 0.5    # [m]
+    hauteur2 = 0.5    # hauteur de la charge par rapport à l'eau [m]
     masse2 = 0.2    # [kg]
     charge = Charge(distance + largeur/2, hauteur2, masse2)
 
