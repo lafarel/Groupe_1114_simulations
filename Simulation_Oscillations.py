@@ -360,7 +360,7 @@ def initialisation():
 
     # paramètres de simulation
     step = 0.0001  # "pas" de la simulation [s], directement lié à la précision
-    end = 20  # durée de la simulation [s]
+    end = 25  # durée de la simulation [s]
     theta_0 = 0  # angle initial [rad]
     omega_0 = 0  # vitesse angulaire initiale [rad/s]
 
@@ -627,10 +627,10 @@ def compare_alpha_graph(t, alpha1, alpha2=None):
 
 if __name__ == '__main__':
     choice = input("1: Angle d'inclinaison\n2: Graphiques\nchoix:")
-    while choice not in ("1","2"):
+    while choice not in ("1", "2", "&", "é"):
         print("choix non valide")
         choice = input("1: Angle d'inclinaison\n2: Graphiques\nchoix:")
-    if choice == "2":
+    if choice in ("2", "é"):
         sim_1 = simulation_charge_fixe()
         sim_2 = simulation_charge_mobile()
         graphique_theta(sim_1[0], sim_1[1], sim_1[2], sim_1[3], sim_1[5])  # inclinaison charge fixe
