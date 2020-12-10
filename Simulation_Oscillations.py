@@ -156,6 +156,17 @@ class Grue:
         """
         return self.masse_tot * 9.81 * self.centre_masse(distance, hauteur)[0]
 
+    def inertie(self, élévation, hauteur, distance):
+        """
+        Calcule le moment d'inertie de la grue
+        """
+        x1, z1 = self.centre_masse_mat(distance, hauteur + élévation)
+        x2, z2 = self.centre_masse_inter(distance, hauteur + élévation)
+        x3, z3 = self.centre_masse_hor(distance, hauteur + élévation)
+        m1, m2, m3 = self.masses
+        c1, c2, c3 = Charge(x1, z1, m1), Charge(x2, z2, m2), Charge(x3, z3, m3)
+        return c1.moment_inertie() + c2.moment_inertie() + c3.moment_inertie()
+
 
 class Plateforme:
     """
@@ -379,7 +390,9 @@ def simulation_charge_fixe():
     """
     # Initalisation de la simulation
     plateforme, charge, grue, masse_totale, enfoncement, sub, soul, coef_amort, step, end, t, theta, omega, alpha, theta_final = initialisation()
-    moment_inertie = plateforme.moment_inertie(enfoncement) + charge.moment_inertie()
+
+    moment_inertie = plateforme.moment_inertie(enfoncement) + charge.moment_inertie() + \
+                     grue.inertie(plateforme.hauteur - enfoncement, charge.z, charge.x)
     for i in range(len(t) - 1):
         if abs(theta[i]) > min(sub,
                                soul):  # vérifie que l'inclinaison ne dépasse pas les valeurs critiques
@@ -446,7 +459,8 @@ def simulation_charge_mobile():
             charge.x = charge.x + dx  # déplace la charge horizontalement
             charge.z = charge.z + dz  # déplace la charge verticalement
             # calcule une nouvelle approximation d l'inertie
-            moment_inertie = plateforme.moment_inertie(enfoncement) + charge.moment_inertie()
+            moment_inertie = plateforme.moment_inertie(enfoncement) + charge.moment_inertie() + \
+                             grue.inertie(plateforme.hauteur - enfoncement, charge.z, charge.x)
         else:
             fin_deplacement = i  # enregistre l'instant de fin du déplacement
         if abs(theta[i]) > min(sub,
